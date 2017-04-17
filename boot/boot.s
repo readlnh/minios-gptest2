@@ -1,7 +1,8 @@
 MBOOT_HEADER_MAGIC  equ 0x1BADB002
 MBOOT_PAGE_ALIGN    equ 1 << 0
 MBOOT_MEM_INFO      equ 1 << 1
-MBOOT_HEADER_FLAGS  equ MBOOT_PAGE_ALIGN | MBOOT_MEM_INFO
+MBOOT_GRAPH_MODE    equ 1 << 2
+MBOOT_HEADER_FLAGS  equ MBOOT_PAGE_ALIGN | MBOOT_MEM_INFO | MBOOT_GRAPH_MODE
 MBOOT_CHECKSUM      equ -(MBOOT_HEADER_MAGIC + MBOOT_HEADER_FLAGS)
 
 ;magic flags checksum (magic + flags + checksum = 0)
@@ -12,6 +13,17 @@ section .text
 dd MBOOT_HEADER_MAGIC
 dd MBOOT_HEADER_FLAGS
 dd MBOOT_CHECKSUM
+
+dd 0
+dd 0
+dd 0
+dd 0 
+dd 0
+
+dd 0
+dd 640
+dd 480
+dd 16
 
 [GLOBAL start]
 [GLOBAL glb_mboot_ptr]
@@ -24,6 +36,8 @@ start:
     mov ebp, 0
     and esp, 0FFFFFFF0H
     mov [glb_mboot_ptr] , ebx
+
+	push ebx
     call kern_entry
 
 stop:
